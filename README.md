@@ -11,7 +11,9 @@
 1. Выполните команду pip install -r requirements.txt, используя файл requirements.txt.
 
 #### 3. Модули:
-1. approach - находятся Класс Product и Класс Category.
+1. approach - находятся Класс Product, Smartphone — наследник Product, LawnGrass — наследник Product, 
+Класс Category.
 
 #### 4. Тесты:
-1. test_approach - тестирует class Product и class Category с помощью conftest.
+1. test_approach - тестирует Класс Product, Smartphone — наследник Product, LawnGrass — 
+наследник Product, Класс Category. с помощью conftest.

@@ -1,6 +1,6 @@
 import pytest
 
-from src.approach import Category, Product
+from src.approach import Category, Product, Smartphone, LawnGrass
 
 
 def test_product_01(entity_names_product_01):
@@ -270,6 +270,151 @@ def test_add_does_not_mutate(product1, product2):
 )
 def test_format_quantity(quantity, expected):
     assert Category._format_quantity(quantity) == expected
+
+
+class TestProduct:
+    """Базовый класс Product: счётчик, цена, new_product, __str__, __add__."""
+
+    def test_product_count_increments(self):
+        Product("A", "B", 100, 1)
+        Product("C", "D", 200, 2)
+        assert Product.product_count == 2
+
+    def test_price_property(self):
+        p = Product("A", "B", 100.5, 1)
+        assert p.price == 100.5
+
+    def test_price_setter_valid(self):
+        p = Product("A", "B", 100, 1)
+        p.price = 150
+        assert p.price == 150.0
+
+    def test_price_setter_invalid_keeps_old(self, capsys):
+        p = Product("A", "B", 100, 1)
+        p.price = 0
+        assert p.price == 100.0
+        out = capsys.readouterr().out
+        assert "Цена не должна быть нулевая или отрицательная" in out
+
+    def test_new_product(self):
+        data = {"name": "A", "description": "B", "price": 100, "quantity": 3}
+        p = Product.new_product(data)
+        assert isinstance(p, Product)
+        assert (p.name, p.price, p.quantity) == ("A", 100.0, 3.0)
+
+    def test_str(self):
+        p = Product("A", "B", 100, 5)
+        assert str(p) == "A, 100.00 руб. Остаток: 5 шт."
+
+    def test_add_products(self, product1, product2):
+        expected = 180000.0 * 5 + 210000.0 * 8
+        assert product1 + product2 == expected
+
+    def test_add_product_with_smartphone_raises(self, product1, smartphone1):
+        with pytest.raises(TypeError):
+            product1 + smartphone1
+
+
+class TestSmartphone:
+    """Наследник Smartphone: атрибуты, наследование, сложение."""
+
+    def test_attributes(self, smartphone1):
+        assert smartphone1.efficiency == 95.5
+        assert smartphone1.model == "S23 Ultra"
+        assert smartphone1.memory == 256
+        assert smartphone1.color == "Серый"
+
+    def test_is_product(self, smartphone1):
+        assert isinstance(smartphone1, Product)
+        assert smartphone1.name == "Samsung Galaxy S23 Ultra"
+        assert smartphone1.price == 180000.0
+
+    def test_str(self, smartphone1):
+        assert str(smartphone1) == "Samsung Galaxy S23 Ultra, 180000.00 руб. Остаток: 5 шт."
+
+    def test_add_smartphones(self, smartphone1, smartphone2):
+        expected = 180000.0 * 5 + 210000.0 * 8
+        assert smartphone1 + smartphone2 == expected
+
+    def test_new_product_returns_smartphone(self):
+        data = {"name": "A", "description": "B", "price": 100, "quantity": 1}
+        assert isinstance(Smartphone.new_product(data), Smartphone)
+
+
+class TestLawnGrass:
+    """Наследник LawnGrass: атрибуты, наследование, сложение."""
+
+    def test_attributes(self, grass1):
+        assert grass1.country == "Россия"
+        assert grass1.germination_period == "7 дней"
+        assert grass1.color == "Зеленый"
+
+    def test_is_product(self, grass1):
+        assert isinstance(grass1, Product)
+
+    def test_add_grasses(self, grass1, grass2):
+        expected = 500.0 * 20 + 450.0 * 15
+        assert grass1 + grass2 == expected
+
+    def test_add_grass_and_smartphone_raises(self, grass1, smartphone1):
+        with pytest.raises(TypeError):
+            grass1 + smartphone1
+
+
+class TestCategory:
+    """Категория: счётчики, добавление, геттер products, __str__, форматирование."""
+
+    def test_category_count(self):
+        Category("A", "B", [])
+        Category("C", "D", [])
+        assert Category.category_count == 2
+
+    def test_product_count_on_init(self, product1, product2):
+        Category("A", "B", [product1, product2])
+        assert Category.product_count == 2
+
+    def test_product_count_includes_subclasses(self, smartphone1, grass1):
+        Category("A", "B", [smartphone1, grass1])
+        assert Category.product_count == 2
+
+    def test_add_product_increments_counter(self, product1):
+        category = Category("A", "B", [])
+        category.add_product(product1)
+        assert Category.product_count == 1
+
+    def test_add_smartphone_allowed(self, smartphone1):
+        category = Category("A", "B", [])
+        category.add_product(smartphone1)
+        assert Category.product_count == 1
+        assert "Samsung Galaxy S23 Ultra" in category.products
+
+    def test_add_not_product_raises(self):
+        category = Category("A", "B", [])
+        with pytest.raises(TypeError):
+            category.add_product("Not a product")
+
+    def test_add_int_raises(self):
+        category = Category("A", "B", [])
+        with pytest.raises(TypeError):
+            category.add_product(42)
+
+    def test_products_getter(self, product1, product2):
+        category = Category("Смартфоны", "Тест", [product1, product2])
+        expected = (
+            "Samsung Galaxy S23 Ultra, 180000.00 руб. Остаток: 5 шт.\n"
+            "Iphone 15, 210000.00 руб. Остаток: 8 шт.\n"
+        )
+        assert category.products == expected
+
+    def test_str_sum_of_quantities(self, product1, product2, product3):
+        category = Category("Смартфоны", "Тест", [product1, product2, product3])
+        assert str(category) == "Смартфоны, количество продуктов: 27 шт."
+
+    def test_format_quantity_integer(self):
+        assert Category._format_quantity(5.0) == "5"
+
+    def test_format_quantity_float(self):
+        assert Category._format_quantity(5.5) == "5.5"
 
 
 # python tests/test_approach.py

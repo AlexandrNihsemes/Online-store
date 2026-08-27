@@ -1,6 +1,6 @@
 import pytest
 
-from src.approach import Category, Product, Smartphone, LawnGrass
+from src.approach import Category, LawnGrass, Product, Smartphone
 
 
 def test_product_01(entity_names_product_01):
@@ -138,6 +138,7 @@ def test_category_private_products_and_getter():
 
 # ---------- Счётчики ----------
 
+
 def test_product_count_increments(product1, product2, product3):
     assert Product.product_count == 3
 
@@ -152,6 +153,7 @@ def test_category_product_count_is_sum_of_products(category):
 
 
 # ---------- Цена: геттер и сеттер ----------
+
 
 def test_price_getter(product1):
     assert product1.price == 180000.0
@@ -172,6 +174,7 @@ def test_price_setter_rejects_non_positive(product1, capsys):
 
 # ---------- new_product ----------
 
+
 def test_new_product_from_dict():
     data = {
         "name": "Xiaomi Redmi Note 11",
@@ -189,6 +192,7 @@ def test_new_product_from_dict():
 
 # ---------- Геттер products ----------
 
+
 def test_products_getter_returns_string(category):
     assert isinstance(category.products, str)
 
@@ -204,6 +208,7 @@ def test_products_getter_format(category):
 
 # ---------- add_product ----------
 
+
 def test_add_product_increases_count(category, product1):
     category.add_product(product1)
     assert Category.product_count == 4
@@ -215,6 +220,7 @@ def test_add_product_appears_in_getter(category, product1):
 
 
 # ---------- __str__ ----------
+
 
 def test_product_str(product1):
     assert str(product1) == "Samsung Galaxy S23 Ultra, 180000.00 руб. Остаток: 5 шт."
@@ -239,6 +245,7 @@ def test_category_str_float_total():
 
 # ---------- __add__ ----------
 
+
 def test_add_exact_values(product1, product2):
     # 180000 * 5 + 210000 * 8 = 2580000
     assert product1 + product2 == 2580000.0
@@ -257,6 +264,7 @@ def test_add_does_not_mutate(product1, product2):
 
 
 # ---------- _format_quantity ----------
+
 
 @pytest.mark.parametrize(
     "quantity, expected",
@@ -401,8 +409,7 @@ class TestCategory:
     def test_products_getter(self, product1, product2):
         category = Category("Смартфоны", "Тест", [product1, product2])
         expected = (
-            "Samsung Galaxy S23 Ultra, 180000.00 руб. Остаток: 5 шт.\n"
-            "Iphone 15, 210000.00 руб. Остаток: 8 шт.\n"
+            "Samsung Galaxy S23 Ultra, 180000.00 руб. Остаток: 5 шт.\n" "Iphone 15, 210000.00 руб. Остаток: 8 шт.\n"
         )
         assert category.products == expected
 

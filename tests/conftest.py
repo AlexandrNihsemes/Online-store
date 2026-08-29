@@ -107,6 +107,17 @@ def grass1():
     return LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20, "Россия", "7 дней", "Зеленый")
 
 
+@pytest.fixture
+def smartphone2():
+    return Smartphone("Iphone 15", "512GB, Gray space", 210000.0, 8, 95.0, "15", 512, "серый")
+
+
+@pytest.fixture
+def grass2():
+    return LawnGrass("Газон универсальный", "Трава для дачи", 450.0, 15, "Россия", "10 дней", "зелёный")
+
+
+
 # python tests/conftest.py
 # black tests/conftest.py
 # flake8 tests/conftest.py

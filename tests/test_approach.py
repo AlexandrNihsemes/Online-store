@@ -1,6 +1,7 @@
 import pytest
 
 from src.approach import Category, LawnGrass, Product, Smartphone
+from src.approach import BaseProduct, ReprMixin
 
 
 def test_product_01(entity_names_product_01):
@@ -422,6 +423,57 @@ class TestCategory:
 
     def test_format_quantity_float(self):
         assert Category._format_quantity(5.5) == "5.5"
+
+
+class TestBaseProduct:
+    """Абстрактный базовый класс."""
+
+    def test_base_product_cannot_be_instantiated(self):
+        """BaseProduct абстрактный — создать экземпляр напрямую нельзя."""
+        with pytest.raises(TypeError):
+            BaseProduct("Телефон", "Описание", 1000.0, 1)
+
+    def test_product_is_subclass_of_base_product(self):
+        assert issubclass(Product, BaseProduct)
+
+    def test_smartphone_and_grass_inherit_base_interface(self):
+        assert issubclass(Smartphone, BaseProduct)
+        assert issubclass(LawnGrass, BaseProduct)
+
+    def test_smartphone_and_grass_inherit_only_from_product(self):
+        """Smartphone и LawnGrass наследуются только от Product."""
+        assert Smartphone.__bases__ == (Product,)
+        assert LawnGrass.__bases__ == (Product,)
+
+
+class TestReprMixin:
+    """Миксин: печать информации о созданном объекте."""
+
+    def test_mixin_is_in_product_mro(self):
+        assert ReprMixin in Product.__mro__
+
+    def test_product_creation_prints_class_and_params(self, capsys):
+        Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет", 180000.0, 5)
+        out = capsys.readouterr().out
+        assert "Создан объект класса Product" in out
+        assert "Samsung Galaxy S23 Ultra" in out
+        assert "price=180000.0" in out
+        assert "quantity=5.0" in out
+
+    def test_smartphone_creation_prints_class_name(self, capsys):
+        Smartphone("iPhone 15", "512GB, Gray space", 210000.0, 8, 90.0, "15", 256, "серый")
+        out = capsys.readouterr().out
+        assert "Создан объект класса Smartphone" in out
+
+    def test_lawn_grass_creation_prints_class_name(self, capsys):
+        LawnGrass("Газон", "Трава", 500.0, 10, "Россия", "7 дней", "зелёный")
+        out = capsys.readouterr().out
+        assert "Создан объект класса LawnGrass" in out
+
+    def test_category_does_not_print(self, capsys):
+        """Category не использует миксин — вывода быть не должно."""
+        Category("Смартфоны", "Описание", [])
+        assert capsys.readouterr().out == ""
 
 
 # python tests/test_approach.py

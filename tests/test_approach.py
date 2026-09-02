@@ -1,7 +1,6 @@
 import pytest
 
-from src.approach import Category, LawnGrass, Product, Smartphone
-from src.approach import BaseProduct, ReprMixin
+from src.approach import BaseProduct, Category, LawnGrass, Product, ReprMixin, Smartphone
 
 
 def test_product_01(entity_names_product_01):
@@ -476,7 +475,62 @@ class TestReprMixin:
         assert capsys.readouterr().out == ""
 
 
-# python tests/test_approach.py
+class TestProductQuantityValidation:
+    """Создание товара с нулевым количеством запрещено."""
+
+    def test_zero_quantity_raises_value_error(self):
+        with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+            Product("Бракованный товар", "Неверное количество", 1000.0, 0)
+
+    def test_positive_quantity_creates_product(self):
+        product = Product("Телефон", "Описание", 1000.0, 5)
+        assert product.quantity == 5.0
+
+    def test_smartphone_zero_quantity_raises_value_error(self):
+        """Наследники тоже проверяются — валидация живёт в Product."""
+        with pytest.raises(ValueError):
+            Smartphone("iPhone 15", "Смартфон", 100.0, 0, 90.0, "15", 256, "серый")
+
+    def test_lawn_grass_zero_quantity_raises_value_error(self):
+        with pytest.raises(ValueError):
+            LawnGrass("Газон", "Трава", 50.0, 0, "Россия", "7 дней", "зелёный")
+
+    def test_failed_creation_does_not_increment_counter(self):
+        """Счётчик продуктов не растёт, если создание упало."""
+        count_before = Product.product_count
+        with pytest.raises(ValueError):
+            Product("Брак", "Описание", 100.0, 0)
+        assert Product.product_count == count_before
+
+
+class TestCategoryMiddlePrice:
+    """Средний ценник товаров категории."""
+
+    def test_middle_price_average(self):
+        p1 = Product("A", "Описание", 100.0, 1)
+        p2 = Product("B", "Описание", 200.0, 2)
+        p3 = Product("C", "Описание", 300.0, 3)
+        category = Category("Категория", "Описание", [p1, p2, p3])
+        assert category.middle_price() == 200.0
+
+    def test_middle_price_uses_only_price(self):
+        """Количество на складе не влияет — берётся только self.price."""
+        p1 = Product("A", "Описание", 100.0, 100)
+        p2 = Product("B", "Описание", 200.0, 1)
+        category = Category("Категория", "Описание", [p1, p2])
+        assert category.middle_price() == 150.0
+
+    def test_middle_price_with_subclasses(self):
+        phone = Smartphone("iPhone", "Смартфон", 100.0, 1, 90.0, "15", 256, "чёрный")
+        grass = LawnGrass("Газон", "Трава", 50.0, 2, "Россия", "7 дней", "зелёный")
+        category = Category("Смешанная", "Описание", [phone, grass])
+        assert category.middle_price() == 75.0
+
+    def test_empty_category_returns_zero(self):
+        category = Category("Пустая категория", "Описание", [])
+        assert category.middle_price() == 0
+
+
 # black tests/test_approach.py
 # flake8 tests/test_approach.py
 # mypy tests/test_approach.py

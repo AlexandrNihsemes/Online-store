@@ -1,0 +1,8 @@
+In [1]: p = Product.objects.get(name="Конвертер документов")
+In [2]: p.price, p.updated_at
+Out[2]: (Decimal('700.00'), datetime.datetime(2026, 10, 30, 14, 34, 45, 313178,
+       tzinfo=datetime.timezone.utc))
+In [3]: p.price = 950
+In [4]: p.save()
+In [5]: Product.objects.get(name="Конвертер документов").price
+Out[5]: Decimal('950.00')

@@ -1,0 +1,54 @@
+[
+{
+  "model": "catalog.product",
+  "pk": 11,
+  "fields": {
+    "name": "Удобный сервис рассылок",
+    "description": "Рассылки по собственной базе подписчиков",
+    "image": "",
+    "category": 9,
+    "price": "1400.00",
+    "created_at": "2026-10-30T14:34:45.311Z",
+    "updated_at": "2026-10-30T14:34:45.311Z"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 13,
+  "fields": {
+    "name": "Бот для Telegram с оплатой",
+    "description": "Приём платежей прямо в боте",
+    "image": "",
+    "category": 10,
+    "price": "2500.00",
+    "created_at": "2026-10-30T14:34:45.312Z",
+    "updated_at": "2026-10-30T14:34:45.312Z"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 14,
+  "fields": {
+    "name": "Конвертер документов",
+    "description": "DOCX, PDF и XLSX в одном окне",
+    "image": "",
+    "category": 11,
+    "price": "950.00",
+    "created_at": "2026-10-30T14:34:45.313Z",
+    "updated_at": "2026-10-30T14:34:45.362Z"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 15,
+  "fields": {
+    "name": "Интернет-магазин под ключ",
+    "description": "Витрина, корзина и админка на Django",
+    "image": "",
+    "category": 12,
+    "price": "15000.00",
+    "created_at": "2026-10-30T14:34:45.313Z",
+    "updated_at": "2026-10-30T14:34:45.313Z"
+  }
+}
+]

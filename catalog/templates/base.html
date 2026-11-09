@@ -21,7 +21,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 <header>
-    {% include "menu.html" %}
+    {% block menu %}{% include "menu.html" %}{% endblock %}
 </header>
 
 <main class="flex-grow-1">

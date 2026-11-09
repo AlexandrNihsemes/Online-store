@@ -1,6 +1,6 @@
 from django.contrib import messages
-from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
 from .forms import ProductForm
 from .models import Contact, Product
@@ -8,53 +8,61 @@ from .models import Contact, Product
 PRODUCTS_PER_PAGE = 6
 
 
-def home(request):
+class HomeView(ListView):
     """Контроллер главной страницы: список товаров с постраничной навигацией."""
-    products = Product.objects.all()
 
-    paginator = Paginator(products, PRODUCTS_PER_PAGE)
-    page_obj = paginator.get_page(request.GET.get("page"))
+    model = Product
+    template_name = "home.html"
+    context_object_name = "products"
+    paginate_by = PRODUCTS_PER_PAGE
 
-    return render(request, "home.html", {"products": page_obj, "page_obj": page_obj})
 
-
-def product_detail(request, pk):
+class ProductDetailView(DetailView):
     """Контроллер страницы товара: получает pk, извлекает объект через ORM."""
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, "product_detail.html", {"product": product})
+
+    model = Product
+    template_name = "product_detail.html"
+    context_object_name = "product"
 
 
-def product_add(request):
+class ProductCreateView(CreateView):
     """Контроллер добавления товара: валидирует форму и сохраняет объект в БД."""
-    if request.method == "POST":
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            product = form.save()
-            messages.success(request, f"Товар «{product.name}» успешно добавлен.")
-            return redirect("product_detail", pk=product.pk)
-    else:
-        form = ProductForm()
 
-    return render(request, "product_form.html", {"form": form})
+    model = Product
+    form_class = ProductForm
+    template_name = "product_form.html"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f"Товар «{self.object.name}» успешно добавлен.")
+        return response
+
+    def get_success_url(self):
+        return reverse_lazy("product_detail", kwargs={"pk": self.object.pk})
 
 
-def contacts(request):
+class ContactsView(TemplateView):
     """
     Контроллер страницы контактов.
     Показывает контактные данные, заполненные в админке,
     и обрабатывает форму обратной связи.
     """
-    contact = Contact.objects.first()
 
-    if request.method == "POST":
-        name = request.POST.get("name", "")
-        phone = request.POST.get("phone", "")
-        message = request.POST.get("message", "")
+    template_name = "contacts.html"
 
-        return render(
-            request,
-            "contacts.html",
-            {"success": True, "name": name, "contact": contact, "phone": phone, "message": message},
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["contact"] = Contact.objects.first()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        context.update(
+            {
+                "success": True,
+                "name": request.POST.get("name", ""),
+                "phone": request.POST.get("phone", ""),
+                "message": request.POST.get("message", ""),
+            }
         )
-
-    return render(request, "contacts.html", {"contact": contact})
+        return self.render_to_response(context)

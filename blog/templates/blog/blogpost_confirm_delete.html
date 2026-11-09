@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block menu %}{% include "menu.html" %}{% endblock %}
+
+{% block title %}Удаление статьи — Блог Skystore{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-7">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h1 class="h3 mb-3">Удалить статью?</h1>
+                    <p class="mb-4">Запись «{{ post.title }}» будет удалена без возможности восстановления.</p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                        <a href="{% url 'blog:blog_detail' post.pk %}" class="btn btn-outline-secondary">Отмена</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

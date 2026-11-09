@@ -1,0 +1,14 @@
+In [1]: from catalog.models import Category, Product
+In [2]: cat_news = Category.objects.get(name="Рассылки")
+In [3]: cat_bots = Category.objects.get(name="Телеграм боты")
+In [4]: cat_tools = Category.objects.get(name="Полезные утилиты")
+In [5]: cat_web = Category.objects.get(name="Веб-приложения")
+In [6]: p1 = Product.objects.create(name="Удобный сервис рассылок", description="Рассылки по собственной базе подписчиков", category=cat_news, price=1400)
+In [7]: p2 = Product.objects.create(name="Аналитика рассылок", description="Статистика открытий и переходов", category=cat_news, price=1900)
+In [8]: p3 = Product.objects.create(name="Бот для Telegram с оплатой", description="Приём платежей прямо в боте", category=cat_bots, price=2500)
+In [9]: p4 = Product.objects.create(name="Конвертер документов", description="DOCX, PDF и XLSX в одном окне", category=cat_tools, price=700)
+In [10]: p5 = Product.objects.create(name="Интернет-магазин под ключ", description="Витрина, корзина и админка на Django", category=cat_web, price=15000)
+In [11]: p1, p2, p3, p4, p5
+Out[11]: (<Product: Удобный сервис рассылок (1400 руб.)>, <Product: Аналитика рассылок (1900 руб.)>,
+       <Product: Бот для Telegram с оплатой (2500 руб.)>, <Product: Конвертер документов (700 руб.)>,
+       <Product: Интернет-магазин под ключ (15000 руб.)>)

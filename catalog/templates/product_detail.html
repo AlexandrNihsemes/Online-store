@@ -36,7 +36,11 @@
                 <dd class="col-sm-8">{{ product.updated_at|date:"d.m.Y H:i" }}</dd>
             </dl>
 
-            <a href="{% url 'home' %}" class="btn btn-outline-primary mt-3">Назад в каталог</a>
+            <div class="d-flex flex-wrap gap-2 mt-3">
+                <a href="{% url 'home' %}" class="btn btn-outline-primary">Назад в каталог</a>
+                <a href="{% url 'product_edit' product.pk %}" class="btn btn-outline-secondary">Редактировать</a>
+                <a href="{% url 'product_delete' product.pk %}" class="btn btn-outline-danger">Удалить</a>
+            </div>
         </div>
     </div>
 </div>

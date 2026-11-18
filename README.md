@@ -19,11 +19,14 @@ skystore/            # настройки проекта и корневые м�
 catalog/             # приложение каталога
   models.py          # Category, Product, Contact
   admin.py           # настройки админки
-  views.py           # главная страница и контакты
+  forms.py           # ProductForm: валидация и стилизация полей
+  constants.py       # FORBIDDEN_WORDS, ограничения для изображений
+  views.py           # CRUD товаров, главная страница и контакты
+  urls.py            # маршруты каталога
   migrations/        # история миграций
   fixtures/          # categories.json, products.json
   management/commands/load_test_data.py
-  templates/         # home.html, contacts.html
+  templates/         # home.html, product_form.html, product_confirm_delete.html и др.
 screenshots/         # скриншоты работы в shell (задание 5)
 .env.sample          # шаблон переменных окружения
 ```
@@ -102,6 +105,27 @@ python manage.py load_test_data
 | Category | `name`, `description`                                                                                  |
 | Product  | `name`, `description`, `image`, `category` (FK → Category), `price`, `created_at`, `updated_at`        |
 | Contact  | `country`, `inn`, `address`, `phone`, `email` — контактные данные на странице `/contacts/`             |
+
+## Карточки товаров
+
+CRUD реализован на `django.forms` и class-based views:
+
+| Действие       | URL                          | View                 |
+|----------------|------------------------------|----------------------|
+| Список         | `/`                          | `HomeView`           |
+| Просмотр       | `/products/<pk>/`            | `ProductDetailView`  |
+| Создание       | `/products/add/`             | `ProductCreateView`  |
+| Редактирование | `/products/<pk>/edit/`       | `ProductUpdateView`  |
+| Удаление       | `/products/<pk>/delete/`     | `ProductDeleteView`  |
+
+Валидация формы `ProductForm` (`catalog/forms.py`):
+
+- список запрещённых слов вынесен в константу `FORBIDDEN_WORDS` (`catalog/constants.py`)
+  и проверяется в `name` и `description` без учёта регистра;
+- `clean_price` не пропускает отрицательную цену и возвращает понятное пользователю сообщение;
+- `clean_image` принимает только JPEG и PNG размером до 5 МБ;
+- стилизация всех полей (Bootstrap-классы `form-control`, `form-select`, `form-check-input`)
+  выполняется в методе `__init__`.
 
 ## Работа в shell
 

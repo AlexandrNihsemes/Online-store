@@ -1,6 +1,6 @@
 from django.contrib import messages
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, TemplateView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView
 
 from .forms import ProductForm
 from .models import Contact, Product
@@ -38,7 +38,38 @@ class ProductCreateView(CreateView):
         return response
 
     def get_success_url(self):
-        return reverse_lazy("product_detail", kwargs={"pk": self.object.pk})
+        return reverse("product_detail", kwargs={"pk": self.object.pk})
+
+
+class ProductUpdateView(UpdateView):
+    """Контроллер редактирования товара: та же форма, что и при создании."""
+
+    model = Product
+    form_class = ProductForm
+    template_name = "product_form.html"
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f"Товар «{self.object.name}» обновлён.")
+        return response
+
+    def get_success_url(self):
+        return reverse("product_detail", kwargs={"pk": self.object.pk})
+
+
+class ProductDeleteView(DeleteView):
+    """Контроллер удаления товара: подтверждение и возврат в каталог."""
+
+    model = Product
+    template_name = "product_confirm_delete.html"
+    context_object_name = "product"
+    success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        product_name = self.object.name
+        response = super().form_valid(form)
+        messages.success(self.request, f"Товар «{product_name}» удалён.")
+        return response
 
 
 class ContactsView(TemplateView):

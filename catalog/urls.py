@@ -12,4 +12,7 @@ urlpatterns = [
     path("products/add/", views.ProductCreateView.as_view(), name="product_add"),
     # Страница товара
     path("products/<int:pk>/", views.ProductDetailView.as_view(), name="product_detail"),
+    # Редактирование и удаление товара
+    path("products/<int:pk>/edit/", views.ProductUpdateView.as_view(), name="product_edit"),
+    path("products/<int:pk>/delete/", views.ProductDeleteView.as_view(), name="product_delete"),
 ]

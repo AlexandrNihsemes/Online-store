@@ -1,0 +1,6 @@
+In [1]: Product.objects.filter(name="Аналитика рассылок").delete()
+Out[1]: (1, {'catalog.Product': 1})
+In [2]: Product.objects.all()
+Out[2]: <QuerySet [<Product: Интернет-магазин под ключ (15000.00 руб.)>, <Product: Конвертер документов
+       (950.00 руб.)>, <Product: Бот для Telegram с оплатой (2500.00 руб.)>, <Product: Удобный сервис
+       рассылок (1400.00 руб.)>]>

@@ -1,0 +1,6 @@
+In [1]: cat_news = Category.objects.get(name="Рассылки")
+In [2]: Product.objects.filter(category=cat_news)
+Out[2]: <QuerySet [<Product: Аналитика рассылок (1900.00 руб.)>, <Product: Удобный сервис рассылок
+       (1400.00 руб.)>]>
+In [3]: cat_news.products.count()
+Out[3]: 2

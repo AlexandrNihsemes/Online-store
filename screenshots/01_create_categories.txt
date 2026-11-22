@@ -1,0 +1,8 @@
+In [1]: from catalog.models import Category, Product
+In [2]: c1 = Category.objects.create(name="Рассылки", description="Сервисы email-рассылок")
+In [3]: c2 = Category.objects.create(name="Телеграм боты", description="Боты для Telegram")
+In [4]: c3 = Category.objects.create(name="Полезные утилиты", description="Небольшие программы для повседневных задач")
+In [5]: c4 = Category.objects.create(name="Веб-приложения", description="Веб-сервисы под заказ")
+In [6]: c1, c2, c3, c4
+Out[6]: (<Category: Рассылки>, <Category: Телеграм боты>, <Category: Полезные утилиты>, <Category: Веб-
+       приложения>)
